@@ -28,6 +28,36 @@ This empowers users to track and accelerate their speaking skill development wit
 
 ---
 
+## Screenshots
+### Main
+![Main](https://github.com/user-attachments/assets/b195a344-a0a9-47ca-89f5-bcd6d799e0cc)
+
+### Signup
+![Signup](https://github.com/user-attachments/assets/0356af7f-bc3b-4f82-b861-272e0402258c)
+
+### Login
+![Login](https://github.com/user-attachments/assets/498b0b76-9357-4874-b447-0c981656b9dc)
+
+### Home
+![Home](https://github.com/user-attachments/assets/d866243a-06de-4a5b-8468-002e2eb09a88)
+
+### Profile
+![Profile](https://github.com/user-attachments/assets/93ee9dee-e946-4d10-93c6-f557e429743d)
+
+### Voice_Assistant
+![Voice_Assistant](https://github.com/user-attachments/assets/a8a3a4c0-eb42-4c49-87e2-57e78274063c)
+
+### Voice_Assistant_Initiating
+![Voice_Assistant_Initiating](https://github.com/user-attachments/assets/c91fcf76-1e68-4772-9915-7fdedc35b21e)
+
+### Feedback
+![Feedback](https://github.com/user-attachments/assets/9d6cd41c-7b4e-45b6-8523-7dc98ad8b65e)
+
+### Feedback_Record
+![Feedback_Record](https://github.com/user-attachments/assets/aaa14a7f-0fea-4b28-8933-44cce2d1d6da)
+
+---
+
 ## System Workflow
 
 1. **User speaks or uploads audio.**
