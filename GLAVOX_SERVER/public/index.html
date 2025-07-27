@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Speech Assistant</title>
+</head>
+
+<body>
+  <div id="auth-section">
+    <input type="text" id="name" placeholder="Name" />
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="signup()">Signup</button>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="ai-section" style="display:none;">
+    <h1>🎙 Talk to AI</h1>
+    <button id="start-btn">Start Listening</button>
+    <p>Text: <span id="recognized-text">...</span></p>
+    <p>AI: <span id="response-text">Waiting for response...</span></p>
+    <audio id="audio-player" controls style="display: none;"></audio>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/jwt-decode/build/jwt-decode.min.js"></script>
+  <script>
+    async function signup() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const data = await res.json();
+      alert(data.message || data.error);
+    }
+
+    async function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        document.getElementById("auth-section").style.display = "none";
+        document.getElementById("ai-section").style.display = "block";
+      } else {
+        alert(data.error || "Login failed");
+      }
+    }
+
+    document.getElementById("start-btn").addEventListener("click", () => {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+
+      recognition.onresult = async (e) => {
+        const speechText = e.results[0][0].transcript;
+        document.getElementById("recognized-text").innerText = speechText;
+
+        const token = localStorage.getItem("token");
+        const decoded = jwt_decode(token);
+        const userId = decoded.userId;
+
+        try {
+          const aiRes = await fetch("/api/ai/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ text: speechText, userId })
+          });
+
+          const aiData = await aiRes.json();
+          console.log("✅ Raw AI Response:", aiData);
+
+          // Forcefully try to print response
+          document.getElementById("response-text").innerText = aiData.reply || "❌ reply missing";
+
+
+
+          // ✅ Handle audio if available
+          const audioPlayer = document.getElementById("audio-player");
+          if (aiData.audioUrl) {
+            audioPlayer.src = aiData.audioUrl + "?t=" + new Date().getTime();
+            audioPlayer.style.display = "block";
+            audioPlayer.play();
+          } else {
+            audioPlayer.style.display = "none";
+          }
+        } catch (err) {
+          console.error("❌ Error in AI fetch:", err);
+          document.getElementById("response-text").innerText = "❌ Failed to get AI response";
+        }
+      };
+
+      recognition.start();
+    });
+  </script>
+</body>
+
+</html>
